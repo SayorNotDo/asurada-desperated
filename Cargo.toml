@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = ["core", "event", "voice"]
+
+
+[workspace.dependencies]
+anyhow = { version = "1.0.95" }
