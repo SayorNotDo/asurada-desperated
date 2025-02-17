@@ -18,6 +18,14 @@ impl WakeDetector {
     }
 
     fn process(&mut self, frame: &[f32]) -> bool {
+        self.buffer.push_slice(frame);
+
+        // 每500ms进行一次检测
+        if self.buffer.len() >= self.buffer.capacity() {
+            let audio = self.buffer.slices();
+        }
+
+        // 计算当前音频MFCC特征
         false
     }
 }
