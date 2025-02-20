@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+crossbeam-channel = { workspace = true }
 tokio = { workspace = true }
 eframe = { workspace = true }
 anyhow = { workspace = true }

@@ -4,11 +4,19 @@ use cpal::{
     Stream,
 };
 use std::time;
-use tokio::sync::mpsc::Sender;
+// use tokio::sync::mpsc::Sender;
+use crossbeam_channel::Sender;
 
 pub struct AudioStream {
     pub stream: Stream,
 }
+
+// async fn process_audio(sender: Sender<WakeEvent>, data: Vec<f32>) {
+//     sender
+//         .send(WakeEvent::AudioFrame(data))
+//         .await
+//         .expect("failed to send audio frame");
+// }
 
 impl AudioStream {
     pub fn new(
@@ -17,7 +25,7 @@ impl AudioStream {
         event_sender: Sender<WakeEvent>,
     ) -> Result<Self, anyhow::Error> {
         list_supported_configs(&device);
-        // 创建音频输入流
+        // Create audio input stream
         let stream_config = match config {
             Some(config) => config.clone(),
             None => get_compatible_config(device)?,
@@ -26,18 +34,12 @@ impl AudioStream {
         let stream = device.build_input_stream(
             &stream_config,
             move |data: &[f32], _| {
-                // 发送原始音频数据到唤醒词检查模块
-                let sender = event_sender.clone();
-                let data_copy = data.to_vec();
-                // 不在tokio运行时内，需要手动创建一个tokio任务
-                tokio::spawn(async move {
-                    sender
-                        .send(WakeEvent::AudioFrame(data_copy))
-                        .await
-                        .expect("failed to send audio frame");
-                });
+                // Send raw audio data to wake word detection module
+                event_sender
+                    .send(WakeEvent::AudioFrame(data.to_vec()))
+                    .unwrap();
             },
-            |err| eprintln!("AudioFrame building error: {:?}", err),
+            |err| eprintln!("Audio stream error: {:?}", err),
             Some(time::Duration::from_secs(5)),
         )?;
 
@@ -50,7 +52,7 @@ impl AudioStream {
 }
 
 fn list_supported_configs(device: &cpal::Device) {
-    println!("supported configuration: ");
+    println!("Supported configurations:");
     let configs = device.supported_input_configs().unwrap();
     for config in configs {
         println!("{:?}", config);
@@ -60,7 +62,7 @@ fn list_supported_configs(device: &cpal::Device) {
 fn get_compatible_config(device: &cpal::Device) -> Result<cpal::StreamConfig, anyhow::Error> {
     let mut configs = device.supported_input_configs()?;
 
-    // 优先选择 f32 格式、16kHz、单声道的音频流
+    // Prefer f32 format, 16kHz sample rate, mono channel
     let preferred_config = configs.find(|c| {
         c.sample_format() == cpal::SampleFormat::F32
             && c.min_sample_rate() <= cpal::SampleRate(44100)

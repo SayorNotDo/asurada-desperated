@@ -1,7 +1,8 @@
 use anyhow::Ok;
 use cpal::traits::HostTrait;
 use event::wake_event::WakeEvent;
-use tokio::sync::mpsc::Sender;
+// use tokio::sync::mpsc::Sender;
+use crossbeam_channel::Sender;
 
 use audio::stream::AudioStream;
 use wakeword::detector::WakeDetector;
