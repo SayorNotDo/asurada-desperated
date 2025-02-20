@@ -1,5 +1,5 @@
 [package]
-name = "event"
+name = "gui"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,3 +7,5 @@ edition = "2021"
 path = "src/lib.rs"
 
 [dependencies]
+eframe = { workspace = true }
+tokio = { workspace = true }
