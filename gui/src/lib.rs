@@ -1,6 +1,6 @@
+use crossbeam_channel::Receiver;
 use eframe::egui;
 use status::WakeStatus;
-use tokio::sync::mpsc::Receiver;
 
 pub mod status;
 

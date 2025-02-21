@@ -1,1 +1,1 @@
-pub(crate) mod detector;
+pub mod detector;

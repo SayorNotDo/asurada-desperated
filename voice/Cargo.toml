@@ -13,3 +13,4 @@ anyhow = { workspace = true }
 crossbeam-channel = { workspace = true }
 ndarray = "0.16.1"
 rustfft = "6.2.0"
+byteorder = "1.5.0"

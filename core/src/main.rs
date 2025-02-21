@@ -1,6 +1,5 @@
 use crossbeam_channel::unbounded;
 use gui::WakeUI;
-use tokio::sync::mpsc;
 use voice::VoiceServer;
 mod event;
 
@@ -8,7 +7,7 @@ mod event;
 async fn main() -> Result<(), anyhow::Error> {
     // 创建事件通道
     let (audio_sender, event_rx) = unbounded();
-    let (gui_sender, gui_rx) = mpsc::channel(8);
+    let (gui_sender, gui_rx) = unbounded();
 
     // 启动音频服务
     let voice_server = VoiceServer::new(audio_sender).expect("failed to boot voice server");
