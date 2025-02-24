@@ -1,0 +1,3 @@
+cargo:rustc-env=TARGET=aarch64-unknown-kernel
+cargo:rustc-cfg=dtb
+cargo:rerun-if-changed=config.toml
