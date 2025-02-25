@@ -1,3 +1,7 @@
+/// 宏
+#[macro_use]
+pub mod macros;
+
 /// Miscellaneous
 pub mod misc;
 
@@ -10,6 +14,5 @@ pub mod interrupt;
 /// 调试支持
 pub mod debug;
 
-/// 宏
-#[macro_use]
-pub mod macros;
+/// 分页实现
+pub mod paging;

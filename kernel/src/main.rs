@@ -2,6 +2,9 @@
 #![cfg_attr(not(test), no_main)]
 
 #[macro_use]
+extern crate alloc;
+
+#[macro_use]
 extern crate bitflags;
 
 use core::sync::atomic::{AtomicU32, Ordering};
@@ -10,12 +13,18 @@ use core::sync::atomic::{AtomicU32, Ordering};
 mod arch;
 use crate::arch::*;
 
+/// 堆分配
+mod allocator;
+
 /// Memory management
 mod memory;
 mod panic;
 
 mod cpu_set;
 mod percpu;
+
+/// 独立架构设备
+mod devices;
 
 mod log;
 

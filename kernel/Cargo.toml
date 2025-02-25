@@ -3,18 +3,27 @@ name = "kernel"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
-bitflags = "2.8.0"
-
-spin = "0.9.8"
-
-
 [build-dependencies]
 toml = "0.8.20"
 rustc-cfg = "0.5.0"
+
+[dependencies]
+bitflags = "2.8.0"
+linked_list_allocator = "0.10.5"
+log = "0.4.26"
+slab = { version = "0.4.9", default-features = false }
+spin = "0.9.8"
+
+[features]
+default = ["graphical_debug"]
+
+graphical_debug = []
 
 [profile.dev]
 panic = "abort"
 
 [profile.release]
 panic = "abort"
+
+lto = true
+debug = "full"
