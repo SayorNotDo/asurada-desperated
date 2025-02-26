@@ -1,7 +1,8 @@
 use crate::allocator::mm::arch::Arch;
-use crate::allocator::mm::page::PageTable;
+use crate::allocator::mm::page::{PageTable, PageFlags, PageFlush};
 use crate::allocator::mm::{FrameAllocator, PhysicalAddress, TableKind, VirtualAddress};
 use core::marker::PhantomData;
+use crate::allocator::mm::page::entry::PageEntry;
 
 pub struct PageMapper<A, F> {
     table_kind: TableKind,
@@ -59,7 +60,14 @@ impl<A: Arch, F: FrameAllocator> PageMapper<A, F> {
         f: impl FnOnce(PhysicalAddress, PageFlags<A>) -> (PhysicalAddress, PageFlags<A>),
     ) -> Option<(PageFlags<A>, PhysicalAddress, PageFlush<A>)> {
         self.visit(virt, |p1, i| {
+            let old_entry = p1.entry(i)?;
+            let old_phys = old_entry.address().ok()?;
+            let old_flags = old_entry.flags();
 
+            let (new_phys, new_flags) = f(p1, old_phys);
+            let new_entry = PageEntry::new(new_phys.data(), new_flags.data());
+            p1.set_entry(i, new_entry);
+            Some((old_flags, old_phys, PageFlush::new(virt)))
         })
     }
 

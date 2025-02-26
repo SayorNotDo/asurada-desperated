@@ -1,4 +1,4 @@
-pub use self::frame::*;
+pub use self::{frame::*, arch::*, page::*};
 
 mod frame;
 mod arch;
