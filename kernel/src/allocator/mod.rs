@@ -1,3 +1,4 @@
+mod mm;
 use crate::memory::KernelMapper;
 
 #[cfg(not(feature = "slab"))]
