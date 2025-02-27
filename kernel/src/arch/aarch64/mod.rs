@@ -16,3 +16,7 @@ pub mod debug;
 
 /// 分页实现
 pub mod paging;
+pub mod consts;
+pub mod start;
+
+pub use crate::allocator::mm::AArch64Arch as CurrentArch;

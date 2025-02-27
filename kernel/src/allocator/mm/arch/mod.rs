@@ -1,6 +1,8 @@
 use crate::allocator::mm::{MemoryArea, PhysicalAddress, TableKind, VirtualAddress};
 use core::ptr;
 
+pub use self::aarch64::AArch64Arch;
+
 #[cfg(target_pointer_width = "64")]
 mod aarch64;
 
@@ -17,7 +19,7 @@ pub trait Arch: Clone + Copy {
     const ENTRY_FLAG_READONLY: usize;
     const ENTRY_FLAG_READWRITE: usize;
     const ENTRY_FLAG_PAGE_USER: usize; // 用户页标志
-    const ENTRY_FLAG_TABLE_USER: usize;
+    const ENTRY_FLAG_TABLE_USER: usize = Self::ENTRY_FLAG_PAGE_USER;
     const ENTRY_FLAG_NO_EXEC: usize;
     const ENTRY_FLAG_EXEC: usize;
     const ENTRY_FLAG_GLOBAL: usize;
@@ -39,7 +41,7 @@ pub trait Arch: Clone + Copy {
 
     const ENTRY_ADDRESS_SIZE: usize = 1 << Self::ENTRY_ADDRESS_WIDTH;
     const ENTRY_ADDRESS_MASK: usize = !(Self::PAGE_ADDRESS_SIZE - 1) as usize;
-    const ENTRY_FLAGS_MAKE: usize = !(Self::ENTRY_ADDRESS_MASK << Self::ENTRY_ADDRESS_SHIFT);
+    const ENTRY_FLAGS_MASK: usize = !(Self::ENTRY_ADDRESS_MASK << Self::ENTRY_ADDRESS_SHIFT);
 
     unsafe fn init() -> &'static [MemoryArea];
 

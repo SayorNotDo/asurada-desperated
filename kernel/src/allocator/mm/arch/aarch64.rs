@@ -6,8 +6,8 @@ use core::arch::asm;
 pub struct AArch64Arch;
 
 impl Arch for AArch64Arch {
-    const PAGE_SHIFT: usize = 12;
-    const ENTRY_ADDRESS_SHIFT: usize = 9;
+    const PAGE_SHIFT: usize = 12; // 4096 bytes
+    const PAGE_ENTRY_SHIFT: usize = 9; // 512 entries, 8 bytes each
     const PAGE_LEVELS: usize = 4;
 
     const ENTRY_ADDRESS_WIDTH: usize = 40;
@@ -73,10 +73,10 @@ impl Arch for AArch64Arch {
     unsafe fn set_table(table_kind: TableKind, address: PhysicalAddress) {
         match table_kind {
             TableKind::User => {
-                asm!("mrs {0}, ttbr0_el1", out(reg) address.data());
+                asm!("msr ttbr0_el1, {0}", in(reg) address.data());
             }
             TableKind::Kernel => {
-                asm!("mrs {0}, ttbr1_el1", out(reg) address.data());
+                asm!("msr ttbr1_el1, {0}", in(reg) address.data());
             }
         }
         Self::invalidate_all();

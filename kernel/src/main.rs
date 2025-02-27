@@ -1,6 +1,7 @@
+#![deny(unused_must_use)]
+#![feature(allocator_api)]
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(not(test), no_main)]
-
 #[macro_use]
 extern crate alloc;
 
@@ -8,6 +9,9 @@ extern crate alloc;
 extern crate bitflags;
 
 use core::sync::atomic::{AtomicU32, Ordering};
+
+use crate::consts::*;
+
 #[macro_use]
 #[allow(dead_code)]
 mod arch;
@@ -27,6 +31,11 @@ mod percpu;
 mod devices;
 
 mod log;
+
+
+/// 全局内存分配器
+#[cfg_attr(not(test), global_allocator)]
+static ALLOCATOR: allocator::Allocator = allocator::Allocator;
 
 /// Get the current CPU's scheduling ID
 fn cpu_id() -> crate::cpu_set::LogicalCpuId {
@@ -49,5 +58,3 @@ struct Bootstrap {
 
 static BOOTSTRAP: spin::Once<Bootstrap> = spin::Once::new();
 
-#[no_mangle] // 不重整函数名
-pub extern "C" fn _start() {}

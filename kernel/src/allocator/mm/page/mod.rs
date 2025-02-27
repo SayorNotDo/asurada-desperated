@@ -1,4 +1,4 @@
-use self::{table::*, mapper::*, entry::*, flags::*, flush::*};
+pub use self::{table::*, mapper::*, entry::*, flags::*, flush::*};
 
 mod mapper;
 mod table;

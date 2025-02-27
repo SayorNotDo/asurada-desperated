@@ -10,7 +10,7 @@
   "env": "",
   "vendor": "unknown",
   "linker": "rust-lld",
-  "linker-flavor": "gnu-lld",
+  "linker-flavor": "ld.lld",
   "features": "+strict-align,-neon,-fp-armv8,+tpidr-el1",
   "dynamic-linking": false,
   "executables": true,

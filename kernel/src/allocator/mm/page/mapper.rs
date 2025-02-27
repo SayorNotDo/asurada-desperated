@@ -26,9 +26,9 @@ impl<A: Arch, F: FrameAllocator> PageMapper<A, F> {
         Some(Self::new(table_kind, table_addr, allocator))
     }
 
-    pub unsafe fn current(table_kind: TableKind, allocator: F) -> Option<Self> {
+    pub unsafe fn current(table_kind: TableKind, allocator: F) -> Self {
         let table_addr = A::table(table_kind);
-        Some(Self::new(table_kind, table_addr, allocator))
+        Self::new(table_kind, table_addr, allocator)
     }
 
     pub fn is_current(&self) -> bool {
@@ -64,18 +64,19 @@ impl<A: Arch, F: FrameAllocator> PageMapper<A, F> {
             let old_phys = old_entry.address().ok()?;
             let old_flags = old_entry.flags();
 
-            let (new_phys, new_flags) = f(p1, old_phys);
+            let (new_phys, new_flags) = f(old_phys, old_flags);
+            // TODO: Higher-level PageEntry::new interface?
             let new_entry = PageEntry::new(new_phys.data(), new_flags.data());
             p1.set_entry(i, new_entry);
             Some((old_flags, old_phys, PageFlush::new(virt)))
-        })
+        }).flatten()
     }
 
     fn visit<T> (&self, virt: VirtualAddress, f: impl FnOnce(&mut PageTable<A>, usize) -> T) -> Option<T> {
         let mut table = self.table();
         unsafe {
             loop {
-                let i = table.index_of(virt);
+                let i = table.index_of(virt)?;
                 if table.level() == 0 {
                     return Some(f(&mut table, i));
                 } else {
