@@ -3,9 +3,17 @@ extern crate serde_derive;
 
 use crate::config::Config;
 use anyhow::{Error, Result};
-use std::{fs, path::Path, process};
+use std::{env, fs, path::Path, process};
 
 mod config;
+
+fn get_target() ->String {
+    env::var("TARGET").unwrap_or(option_env!("TARGET").unwrap_or("aarch64-unknown-none".to_string(), |x| x.to_string()),)
+}
+
+fn install_packages(config: &Config, dest: &str, cookbook: Option<&str>) {
+    let target = &get_target();
+}
 
 // 引导程序获取
 fn fetch_bootloader(
@@ -23,6 +31,7 @@ fn fetch_bootloader(
 
     let mut bootloader_config = Config::default();
     bootloader_config.general = config.general.clone();
+
     Ok((vec![], vec![]))
 }
 
