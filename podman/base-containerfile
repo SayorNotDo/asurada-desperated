@@ -1,0 +1,7 @@
+# Configuration file to install the recipe dependencies inside the Podman container
+
+FROM debian:bookworm-20240513-slim
+
+# _UID_ must be replaced with the user's uid host
+# podman root is mapped to your user id on host during build,
+# poduser is mapped to your user id during podman run

@@ -1,0 +1,13 @@
+[package]
+name = "installer"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "asurada_installer"
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = "1.0.97"
+serde = "1.0.218"
+serde_derive = "1.0.218"

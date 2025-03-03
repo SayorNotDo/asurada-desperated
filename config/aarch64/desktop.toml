@@ -1,0 +1,7 @@
+# 构建系统默认配置文件
+
+include = ["../minimal.toml"]
+
+[general]
+# Filesystem size in MiB
+filesystem_size = 256

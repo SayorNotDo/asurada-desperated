@@ -30,8 +30,8 @@ mod percpu;
 /// 独立架构设备
 mod devices;
 
+mod elf;
 mod log;
-
 
 /// 全局内存分配器
 #[cfg_attr(not(test), global_allocator)]
@@ -58,3 +58,30 @@ struct Bootstrap {
 
 static BOOTSTRAP: spin::Once<Bootstrap> = spin::Once::new();
 
+macro_rules! linker_offset {
+    ($($name:ident),*) => {$(
+    #[inline]
+    pub fn $name() -> usize {
+        extern "C" {
+            static $name: u8;
+        }
+        unsafe { &$name as *const u8 as usize }
+    }
+    )*
+    };
+}
+
+mod kernel_executable_offsets {
+    linker_offset!(
+        __text_start,
+        __text_end,
+        __rodata_start,
+        __rodata_end,
+        __data_start,
+        __data_end,
+        __bss_start,
+        __bss_end,
+        __usercopy_start,
+        __usercopy_end
+    );
+}

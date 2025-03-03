@@ -23,7 +23,7 @@ all: $(BUILD)/kernel $(BUILD)/kernel.sym
 # 特定架构的链接脚本
 LD_SCRIPT=$(SOURCE)/linkers/$(ARCH).ld
 # 目标规格文件，指定构建时使用的目标平台
-TARGET_SPEC=$(RUST_TARGET_PATH)/$(ARCH)-unknown-kernel.json
+TARGET_SPEC=$(RUST_TARGET_PATH)/$(ARCH)-unknown-none.json
 
 
 # 编译内核
