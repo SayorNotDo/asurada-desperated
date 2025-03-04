@@ -20,7 +20,7 @@ REPO_BINARY?=0
 CONFIG_NAME?=desktop
 REPO_NONSTOP?=
 ifeq ($(BOARD),)
-FILESYSTEM_CONFIG?=config$(ARCH)/$(CONFIG_NAME).toml
+FILESYSTEM_CONFIG?=config/$(ARCH)/$(CONFIG_NAME).toml
 else
 FILESYSTEM_CONFIG?=config/$(ARCH)/$(BOARD)/$(CONFIG_NAME).toml
 endif
@@ -52,21 +52,23 @@ else
 	VBM=VBoxManage
 endif
 
+# Automatic variables
 ROOT=$(CURDIR)
+export RUST_COMPILER_RT_ROOT=$(ROOT)/rust/src/llvm-project/compiler-rt
 
 ## userspace variables
 export TARGET=$(ARCH)-unknown-none
-ifeq ($(ARCH),arm64)
-export GNU_TARGET=aarch64-unknown-none
+ifeq ($(ARCH),riscv64gc)
+export GNU_TARGET=riscv64-unknown-none
 else
 export GUN_TARGET=$(TARGET)
 endif
 
 # 构建输出目录
 BUILD=build/$(ARCH)/$(CONFIG_NAME)
-INSTALLER=
+INSTALLER=installer/target/release/asurada_installer
 INSTALLER_OPTS=
-LIST_PACKAGES=
+LIST_PACKAGES=installer/target/release/list_packages
 LIST_PACKAGES_OPTS=
 
 

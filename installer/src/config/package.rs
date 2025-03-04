@@ -1,3 +1,4 @@
+#[derive(Deserialize, Serialize, Clone, Debug)]
 pub enum PackageConfig {
     Empty,
     Build(String),

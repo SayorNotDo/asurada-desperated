@@ -1,0 +1,2 @@
+[target.arrch64-unknown-none]
+rustflags = ["-C", "soft-float"]    # 强制编译器使用软件模拟浮点运算

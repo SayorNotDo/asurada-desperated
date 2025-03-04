@@ -1,8 +1,10 @@
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 
-mod general;
-mod package;
+pub mod general;
+pub mod package;
+pub mod file;
+mod user;
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Config {
@@ -10,5 +12,10 @@ pub struct Config {
     pub general: general::GeneralConfig,
     #[serde(default)]
     pub include: Vec<PathBuf>,
+    #[serde(default)]
     pub packages: BTreeMap<String, package::PackageConfig>,
+    #[serde(default)]
+    pub files: Vec<file::FileConfig>,
+    #[serde(default)]
+    pub users: BTreeMap<String, user::GroupConfig>,
 }

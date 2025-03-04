@@ -1,7 +1,12 @@
 [package]
-name = "installer"
+name = "asurada_installer"
 version = "0.1.0"
 edition = "2024"
+default-run = "asurada_installer"
+
+[[bin]]
+name = "asurada_installer"
+path = "src/bin/installer.rs"
 
 [lib]
 name = "asurada_installer"
@@ -9,5 +14,9 @@ path = "src/lib.rs"
 
 [dependencies]
 anyhow = "1.0.97"
+libc = "0.2.170"
+rand = "0.9.0"
+rust-argon2 = "2.1.0"
 serde = "1.0.218"
 serde_derive = "1.0.218"
+termion = "4.0.4"
