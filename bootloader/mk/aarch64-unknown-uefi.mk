@@ -10,11 +10,11 @@ $(BUILD)/bootloader.efi: $(SOURCE)/Cargo.toml $(SOURCE)/Cargo.lock $(shell find 
 
 $(BUILD)/esp.bin: $(BUILD)/bootloader.efi
 		rm -f "$@.partial"
-		mkfile -n 64m "$@.partial"
+		$(MAKEFILE)  -n 64m "$@.partial"
 
 $(BUILD)/harddrive.bin: $(BUILD)/esp.bin $(BUILD)/filesystem.bin
 		rm -f "$@.partial"
-		mkfile -n 320m "$@.partial"
+		$(MAKEFILE)  -n 320m "$@.partial"
 
 $(BUILD)/firmware.rom: /opt/homebrew/share/qemu/edk2-aarch64-code.fd
 		cp "$<" "$@"
@@ -31,4 +31,4 @@ qemu: $(BUILD)/harddrive.bin $(BUILD)/firmware.rom
 				-net none \
 				-cpu max \
 				-bios "$(BUILD)/firmware.rom" \
-#				-drive file="$<",format=raw
+
