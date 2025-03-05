@@ -46,7 +46,7 @@ fn main() {
     let arch_str = cfg.target_arch.as_str();
 
     match arch_str {
-        "aarch64" => {
+        "aarch64.rs" => {
             println!("cargo:rustc-cfg=dtb");
         }
         "x86" => {

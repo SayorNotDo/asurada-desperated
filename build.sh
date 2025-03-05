@@ -48,7 +48,7 @@ if [ -z "$ARCH" ] && [ -n "$FILESYSTEM_CONFIG" ]; then
     dirname=`dirname "$FILESYSTEM_CONFIG"`
     ARCH=`basename $dirname`
     case "$ARCH" in
-      aarch64) : ;;
+      aarch64.rs) : ;;
       \?) ARCH=""; echo "Unknown Architecture, please specify aarch64";;
     esac
 fi

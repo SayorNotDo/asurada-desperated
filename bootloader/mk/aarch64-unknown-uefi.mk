@@ -1,12 +1,18 @@
 export PARTED?=parted
 export QEMU?=qemu-system-aarch64
 
-all:
+all: $(BUILD)/bootloader.efi
 
 $(BUILD)/bootloader.efi: $(SOURCE)/Cargo.toml $(SOURCE)/Cargo.lock $(shell find $(SOURCE)/src -type f)
 		mkdir -p "$(BUILD)"
 		cargo rustc \
-				--manifest-path="$<"
+				--manifest-path="$<" \
+				-Z build-std-features=compiler-builtins-mem \
+				--target $(TARGET) \
+				--bin bootloader \
+				--release \
+				-- \
+				--emit link="$@"
 
 $(BUILD)/esp.bin: $(BUILD)/bootloader.efi
 		rm -f "$@.partial"

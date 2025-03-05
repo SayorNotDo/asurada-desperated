@@ -15,7 +15,7 @@ mod config;
 mod disk_wrapper;
 
 fn get_target() -> String {
-    env::var("TARGET").unwrap_or(option_env!("TARGET").map_or("aarch64-unknown-none".to_string(), |x| x.to_string()))
+    env::var("TARGET").unwrap_or(option_env!("TARGET").map_or("aarch64.rs-unknown-none".to_string(), |x| x.to_string()))
 }
 
 fn hash_password(password: String) -> Result<String> {

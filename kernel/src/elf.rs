@@ -7,7 +7,7 @@ use alloc::string::String;
 
 use goblin::elf::section_header::SHT_SYMTAB;
 
-#[cfg(target_arch = "aarch64")]
+#[cfg(target_arch = "aarch64.rs")]
 pub use goblin::elf64::{header, program_header, section_header, sym};
 
 /// ELF

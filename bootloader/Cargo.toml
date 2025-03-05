@@ -9,13 +9,14 @@ edition = "2024"
 name = "bootloader"
 path = "src/main.rs"
 
-# BIOS uses lib target
-[lib]
-name = "bootloader"
-path = "src/main.rs"
-crate-type = ["staticlib"]
+## BIOS uses lib target
+#[lib]
+#name = "bootloader"
+#path = "src/main.rs"
+#crate-type = ["staticlib"]
 
 [dependencies]
+log = "0.4.26"
 
 [target."aarch64-unkonwn-uefi".dependencies]
 dmidecode = "0.8.5"
