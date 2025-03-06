@@ -8,7 +8,7 @@
   "is-like-windows": true,
   "linker": "rust-lld",
   "linker-flavor": "lld-link",
-  "llvm-target": "aarch64-pc-windows-msvc",
+  "llvm-target": "aarch64-unknown-none",
   "os": "uefi",
   "panic-strategy": "abort",
   "pre-link-args": {
