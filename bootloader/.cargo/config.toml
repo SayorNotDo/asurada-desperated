@@ -1,9 +1,0 @@
-[target.arrch64-unknown-uefi]
-rustflags = ["-C", "soft-float"]    # 强制编译器使用软件模拟浮点运算
-
-[unstable]
-build-std = ["core", "alloc"]
-
-[build]
-target = "targets/aarch64-unknown-uefi.json"
-

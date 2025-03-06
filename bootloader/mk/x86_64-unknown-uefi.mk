@@ -1,5 +1,5 @@
 export PARTED?=parted
-export QEMU?=qemu-system-aarch64
+export QEMU?=qemu-system-x86_64
 
 all: $(BUILD)/bootloader.efi
 
@@ -17,7 +17,8 @@ $(BUILD)/bootloader.efi: $(SOURCE)/Cargo.toml $(SOURCE)/Cargo.lock $(shell find 
 		--emit link="$@"
 
 $(BUILD)/bootloader-live.efi: $(SOURCE)/Cargo.toml $(SOURCE)/Cargo.lock $(shell find $(SOURCE)/src -type f)
-	mkdir -p "$(BUILD)"
+	mkdir -p $(BUILD)
+	cd "$(SOURCE)"
 	env RUSTFLAGS="-C soft-float" \
 	cargo rustc \
 		--manifest-path="$<" \
@@ -32,25 +33,25 @@ $(BUILD)/bootloader-live.efi: $(SOURCE)/Cargo.toml $(SOURCE)/Cargo.lock $(shell 
 
 $(BUILD)/esp.bin: $(BUILD)/bootloader.efi
 	rm -f "$@.partial"
-	fallocate -l 64MiB "$@.partial"
-	mkfs.vfat -F 32 "$@.partial"
+	fallocate -l 1MiB $@.partial
+	mkfs.vfat "$@.partial"
 	mmd -i "$@.partial" efi
 	mmd -i "$@.partial" efi/boot
-	mcopy -i "$@.partial" "$<" ::efi/boot/bootaa64.efi
+	mcopy -i "$@.partial" "$<" ::efi/boot/bootx64.efi
 	mv "$@.partial" "$@"
 
 $(BUILD)/harddrive.bin: $(BUILD)/esp.bin $(BUILD)/filesystem.bin
 	rm -f "$@.partial"
 	fallocate -l 320MiB "$@.partial"
 	$(PARTED) -s -a minimal "$@.partial" mklabel gpt
-	$(PARTED) -s -a minimal "$@.partial" mkpart ESP FAT32 1MiB 65MiB
-	$(PARTED) -s -a minimal "$@.partial" mkpart REDOXFS 65MiB 100%
+	$(PARTED) -s -a minimal "$@.partial" mkpart ESP FAT32 1MiB 2MiB
+	$(PARTED) -s -a minimal "$@.partial" mkpart REDOXFS 2MiB 100%
 	$(PARTED) -s -a minimal "$@.partial" toggle 1 boot
 	dd if="$(BUILD)/esp.bin" of="$@.partial" bs=1MiB seek=1 conv=notrunc
-	dd if="$(BUILD)/filesystem.bin" of="$@.partial" bs=1MiB seek=65 conv=notrunc
+	dd if="$(BUILD)/filesystem.bin" of="$@.partial" bs=1MiB seek=2 conv=notrunc
 	mv "$@.partial" "$@"
 
-$(BUILD)/firmware.rom: /usr/share/AAVMF/AAVMF_CODE.fd
+$(BUILD)/firmware.rom: /usr/share/OVMF/OVMF_CODE.fd
 	cp "$<" "$@"
 
 qemu: $(BUILD)/harddrive.bin $(BUILD)/firmware.rom
@@ -61,9 +62,9 @@ qemu: $(BUILD)/harddrive.bin $(BUILD)/firmware.rom
 		-chardev stdio,id=debug,signal=off,mux=on \
 		-serial chardev:debug \
 		-mon chardev=debug \
-		-device virtio-gpu-pci \
-		-machine virt \
+		-machine q35 \
 		-net none \
-		-cpu max \
+		-enable-kvm \
+		-cpu host \
 		-bios "$(BUILD)/firmware.rom" \
 		-drive file="$<",format=raw

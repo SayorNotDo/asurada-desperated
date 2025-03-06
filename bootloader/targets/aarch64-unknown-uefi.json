@@ -7,8 +7,8 @@
   "executables": true,
   "is-like-windows": true,
   "linker": "rust-lld",
-  "linker-favor": "lld-link",
-  "llvm-target": "aarch64-unknown-none",
+  "linker-flavor": "lld-link",
+  "llvm-target": "aarch64-pc-windows-msvc",
   "os": "uefi",
   "panic-strategy": "abort",
   "pre-link-args": {
@@ -19,7 +19,7 @@
     ]
   },
   "stack_probes": true,
-  "target-dc-int-width": "32",
+  "target-c-int-width": "32",
   "target-endian": "little",
   "target-pointer-width": "64"
 }
