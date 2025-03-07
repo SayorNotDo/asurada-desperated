@@ -16,7 +16,7 @@ ifeq ($(ARCH),arm64)
 	ARCH:=aarch64
 endif
 
-GNU_TARGET=$(ARCH)-unknown-lora
+GNU_TARGET=$(ARCH)-unknown-asurada
 
 all: $(BUILD)/kernel $(BUILD)/kernel.sym
 

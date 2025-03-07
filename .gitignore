@@ -5,3 +5,5 @@
 Cargo.lock
 
 */target
+/bootloader/_AAVMF_CODE.fd.extracted/
+/bootloader/_AAVMF_CODE.fd-0.extracted/

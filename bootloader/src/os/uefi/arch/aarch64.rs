@@ -192,6 +192,7 @@ unsafe extern "C" fn kernel_entry(
 }
 
 pub fn main() -> Result<()> {
+    // 初始化日志追踪
     LOGGER.init();
 
     let mut os = OsEfi::new();

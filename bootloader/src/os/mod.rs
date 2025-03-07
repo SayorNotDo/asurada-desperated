@@ -15,11 +15,12 @@ pub use self::uefi::*;
 #[macro_use]
 mod uefi;
 
+/// 描述EFI启动时系统的硬件描述方式，基于不同的架构（x86/ARM）处理不同的硬件描述方案
 #[derive(Clone, Copy, Debug)]
 pub enum OsHwDesc {
-    Acpi(u64, u64),
-    DeviceTree(u64, u64),
-    NotFound,
+    Acpi(u64, u64),         // 高级配置和电源接口：（根系统描述指针起始地址，数据结构大小）
+    DeviceTree(u64, u64),   // 存储设备树所在的物理地址信息：（起始地址，数据结构的大小）
+    NotFound,               // 用于错误处理或表示未知硬件描述情况
 }
 
 #[derive(Clone, Copy, Debug)]

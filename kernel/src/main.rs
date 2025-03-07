@@ -1,7 +1,11 @@
 #![deny(unused_must_use)]
 #![feature(allocator_api)]
+#![feature(core_intrinsics)]
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(not(test), no_main)]
+#![feature(array_chunks)]
+#![feature(if_let_guard)]
+#![feature(iterator_try_collect)]
 #[macro_use]
 extern crate alloc;
 

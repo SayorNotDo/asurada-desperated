@@ -119,18 +119,22 @@ fn find_smbios3_system(address: *const u8) -> Result<dmidecode::System<'static>>
     Err(Status::NOT_FOUND)
 }
 
+/// 系统配置表中查找设备树二进制（DTB）的地址
+/// 返回DTB地址的两个部分（物理地址，虚拟地址）
 pub(crate) fn find_dtb<D: Disk, V: Iterator<Item = OsVideoMode>>(
     os: &dyn Os<D, V>,
 ) -> Option<(u64, u64)> {
     let cfg_tables = std::system_table().config_tables();
-    for cfg_table in cfg_tables.iter() {
+    /* 生产环境下启用该部分被注释的代码
+    for cfg_table in cfg_tables.iter() {;
         if cfg_table.VendorGuid == DEVICE_TREE_GUID {
             let addr = cfg_table.VendorTable;
             return parse_dtb(os, addr as *const u8);
         }
-    }
+    } */
 
-    /* This hack is no longer needed, but can be re-enabled for testing
+    /* QEMU 的调试环境下 DTB 硬编码地址
+     */
     #[cfg(target_arch = "aarch64")]
     for cfg_table in cfg_tables.iter() {
         if cfg_table.VendorGuid == SMBIOS3_TABLE_GUID {
@@ -146,7 +150,7 @@ pub(crate) fn find_dtb<D: Disk, V: Iterator<Item = OsVideoMode>>(
             }
         }
     }
-    */
+
 
     None
 }

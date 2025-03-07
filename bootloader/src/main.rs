@@ -429,11 +429,12 @@ fn elf_entry(data: &[u8]) -> (u64, bool) {
 
 fn main<D: Disk, V: Iterator<Item = OsVideoMode>>(os: &dyn Os<D, V>) -> (usize, u64, KernelArgs) {
     println!(
-        "Redox OS Bootloader {} on {}",
+        "Asurada OS Bootloader {} on {}",
         env!("CARGO_PKG_VERSION"),
         os.name()
     );
 
+    // EFI 启动系统的硬件描述方式
     let hwdesc = os.hwdesc();
     println!("Hardware descriptor: {:x?}", hwdesc);
     let (acpi_rsdp_base, acpi_rsdp_size) = match hwdesc {
@@ -444,7 +445,8 @@ fn main<D: Disk, V: Iterator<Item = OsVideoMode>>(os: &dyn Os<D, V>) -> (usize, 
 
     let (mut fs, password_opt) = redoxfs(os);
 
-    print!("RedoxFS ");
+    // TODO：重写文件系统
+    print!("FileSystem ");
     for i in 0..fs.header.uuid().len() {
         if i == 4 || i == 6 || i == 8 || i == 10 {
             print!("-");
@@ -508,6 +510,7 @@ fn main<D: Disk, V: Iterator<Item = OsVideoMode>>(os: &dyn Os<D, V>) -> (usize, 
         None
     };
 
+    // 加载内核到内存
     let (kernel, kernel_entry) = {
         let kernel = load_to_memory(os, &mut fs, "boot", "kernel", Filetype::Elf);
         let (kernel_entry, kernel_64bit) = elf_entry(kernel);
@@ -607,17 +610,17 @@ fn main<D: Disk, V: Iterator<Item = OsVideoMode>>(os: &dyn Os<D, V>) -> (usize, 
                             (mode.stride * mode.height * 4) as u64,
                         )
                     }
-                    .expect("Failed to map framebuffer");
+                    .expect("Failed to map frame_buffer");
 
-                    writeln!(w, "FRAMEBUFFER_ADDR={:016x}", mode.base).unwrap();
-                    writeln!(w, "FRAMEBUFFER_VIRT={:016x}", virt).unwrap();
-                    writeln!(w, "FRAMEBUFFER_WIDTH={:016x}", mode.width).unwrap();
-                    writeln!(w, "FRAMEBUFFER_HEIGHT={:016x}", mode.height).unwrap();
-                    writeln!(w, "FRAMEBUFFER_STRIDE={:016x}", mode.stride).unwrap();
+                    writeln!(w, "FRAME_BUFFER_ADDR={:016x}", mode.base).unwrap();
+                    writeln!(w, "FRAME_BUFFER_VIRT={:016x}", virt).unwrap();
+                    writeln!(w, "FRAME_BUFFER_WIDTH={:016x}", mode.width).unwrap();
+                    writeln!(w, "FRAME_BUFFER_HEIGHT={:016x}", mode.height).unwrap();
+                    writeln!(w, "FRAME_BUFFER_STRIDE={:016x}", mode.stride).unwrap();
                 } else {
                     writeln!(
                         w,
-                        "FRAMEBUFFER{}={:#x},{},{},{}",
+                        "FRAME_BUFFER{}={:#x},{},{},{}",
                         output_i, mode.base, mode.width, mode.height, mode.stride,
                     )
                     .unwrap();

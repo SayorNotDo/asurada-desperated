@@ -63,7 +63,11 @@ pub(crate) fn alloc_zeroed_page_aligned(size: usize) -> *mut u8 {
 }
 
 pub struct OsEfi {
+    // EFI相关的结构体，存储EFI系统表的，其中包含引导服务和运行时服务
     st: &'static SystemTable,
+    // 可变借用运行运行时动态修改输出设备的信息
+    // Output 输出设备
+    // Extended Display Identification Data 描述显示器的数据结构
     outputs: RefCell<Vec<(Output, Option<EdidActive>)>>,
 }
 
@@ -74,7 +78,7 @@ impl OsEfi {
         {
             let guid = Output::guid();
             let mut handles = Vec::with_capacity(256);
-            let mut len = handles.capacity() * mem::size_of::<Handle>();
+            let mut len = handles.capacity() * size_of::<Handle>();
             match status_to_result((st.BootServices.LocateHandle)(
                 LocateSearchType::ByProtocol,
                 &guid,
@@ -84,7 +88,7 @@ impl OsEfi {
             )) {
                 Ok(_) => {
                     unsafe {
-                        handles.set_len(len / mem::size_of::<Handle>());
+                        handles.set_len(len / size_of::<Handle>());
                     }
                     'handles: for handle in handles {
                         //TODO: do we have to query all modes to get good edid?
@@ -209,11 +213,13 @@ impl Os<DiskEfi, VideoModeIter> for OsEfi {
     }
 
     fn hwdesc(&self) -> OsHwDesc {
+        println!("Looking for Hardware Descriptor");
         //TODO: if both DTB and ACPI are found, we should probably let the OS choose what to use?
 
         // For now we will prefer DTB on platforms that have it
         #[cfg(any(target_arch = "aarch64", target_arch = "riscv64"))]
         if let Some((addr, size)) = dtb::find_dtb(self) {
+            println!("Found DTB at {:x}, size: {}", addr, size);
             return OsHwDesc::DeviceTree(addr, size);
         }
 
