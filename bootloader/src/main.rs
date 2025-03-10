@@ -445,7 +445,7 @@ fn main<D: Disk, V: Iterator<Item = OsVideoMode>>(os: &dyn Os<D, V>) -> (usize, 
 
     let (mut fs, password_opt) = redoxfs(os);
 
-    // TODO：重写文件系统
+    // TODO：重写自定义文件系统
     print!("FileSystem ");
     for i in 0..fs.header.uuid().len() {
         if i == 4 || i == 6 || i == 8 || i == 10 {
@@ -510,7 +510,7 @@ fn main<D: Disk, V: Iterator<Item = OsVideoMode>>(os: &dyn Os<D, V>) -> (usize, 
         None
     };
 
-    // 加载内核到内存
+    // 加载内核映像，同时获取内核的入口函数
     let (kernel, kernel_entry) = {
         let kernel = load_to_memory(os, &mut fs, "boot", "kernel", Filetype::Elf);
         let (kernel_entry, kernel_64bit) = elf_entry(kernel);

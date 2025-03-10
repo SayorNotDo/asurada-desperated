@@ -91,7 +91,7 @@ impl OsEfi {
                         handles.set_len(len / size_of::<Handle>());
                     }
                     'handles: for handle in handles {
-                        //TODO: do we have to query all modes to get good edid?
+                        // TODO: do we have to query all modes to get good edid?
                         match Output::handle_protocol(handle) {
                             Ok(output) => {
                                 log::debug!(
@@ -100,11 +100,13 @@ impl OsEfi {
                                     output.0.Mode.FrameBufferBase
                                 );
 
+                                // 帧缓冲地址为 0 则跳过该输出设备（跳过无效设备）
                                 if output.0.Mode.FrameBufferBase == 0 {
                                     log::debug!("Skipping output with frame buffer base of 0");
                                     continue 'handles;
                                 }
 
+                                // 帧缓冲地址匹配，防止重复的输出设备
                                 for other_output in outputs.iter() {
                                     if output.0.Mode.FrameBufferBase
                                         == other_output.0 .0.Mode.FrameBufferBase
@@ -356,11 +358,14 @@ fn status_to_result(status: Status) -> Result<usize> {
     }
 }
 
+/// 在 UEFI 环境中设置最大可用的文本模式
 fn set_max_mode(output: &uefi::text::TextOutput) -> Result<()> {
+    // max_i：存储最大模式的索引，max_w：最大宽度，max_h：最大高度
     let mut max_i = None;
     let mut max_w = 0;
     let mut max_h = 0;
 
+    // 遍历所用可用的文本模式
     for i in 0..output.Mode.MaxMode as usize {
         let mut w = 0;
         let mut h = 0;
@@ -380,10 +385,28 @@ fn set_max_mode(output: &uefi::text::TextOutput) -> Result<()> {
     Ok(())
 }
 
+/// 引导程序入口函数
+// no_mangle 防止函数名重整
+// 目标系统配置清单中的 entry:efi_main 指向 uefi_std crate 中 src/rt/start.rs 处的 efi_main 函数
 #[no_mangle]
 pub extern "C" fn main() -> Status {
+    /// 获取系统表，包含UEFI固件提供的各种系统服务
+    // Hdr：UEFI系统表头部信息
+    // FirmwareVendor： 固件厂商的 UTF-16 字符串指针
+    // FirmwareRevision：固件版本号
+    // ConsoleInHandle：标准输入设备的句柄
+    // ConsoleIn：指向标准输入接口
+    // ConsoleOutHandle：标准输出设备的句柄
+    // ConsoleOut：指向标准输出接口
+    // ConsoleErrorHandle：错误输出设备的句柄
+    // ConsoleError：指向错误输出接口
+    // RuntimeServices：运行时服务表
+    // BootServices：启动服务表
+    // Entries：配置表数量
+    // Configuration：指向配置表的指针
     let uefi = std::system_table();
 
+    // 启动服务初始化看门狗
     let _ = (uefi.BootServices.SetWatchdogTimer)(0, 0, 0, ptr::null());
 
     if let Err(err) = set_max_mode(uefi.ConsoleOut) {

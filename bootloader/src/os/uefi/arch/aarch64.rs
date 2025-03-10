@@ -197,18 +197,21 @@ pub fn main() -> Result<()> {
 
     let mut os = OsEfi::new();
 
-    // Disable cursor
+    // 禁用 UEFI 终端光标
     let _ = (os.st.ConsoleOut.EnableCursor)(os.st.ConsoleOut, false);
 
+    // currentel 描述当前 CPU 运行层级
+    // （00）EL0: 用户态，（01）EL1: 内核态，（10）EL2: 虚拟化态，（11）EL3: 超级管理态
     let currentel: u64;
     unsafe {
         asm!(
-            "mrs {0}, currentel", // Read current exception level
+            "mrs {0}, currentel", // 读取当前异常级别（EL）信息
             out(reg) currentel,
         );
     }
     log::info!("Currently in EL{}", (currentel >> 2) & 3);
 
+    // 硬件自检（POST）阶段
     let (page_phys, func, args) = crate::main(&mut os);
 
     unsafe {
